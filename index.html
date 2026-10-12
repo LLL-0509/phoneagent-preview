@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f8fafc">
+  <title>工作人员工作台 · MindLink</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./staff.css">
+
+  <meta http-equiv="Content-Security-Policy" content="connect-src &apos;none&apos;; object-src &apos;none&apos;; base-uri &apos;none&apos;; form-action &apos;none&apos;">
+  <link rel="stylesheet" href="./preview.css">
+</head>
+<body class="staff-page" data-preview-page="staff">
+  <a class="skip-link" href="#staff-workspace">跳至工作区</a>
+  <div class="app-shell staff-shell">
+    <header class="topbar">
+      <a class="brand" href="./index.html" aria-label="MindLink 工作人员工作台">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span><strong>MindLink</strong><small>心理热线坐席工作台</small></span>
+      </a>
+      <nav class="staff-navigation" aria-label="工作台导航">
+        <a href="./index.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="./icons.svg#headphones"></use></svg>服务工作台</a>
+        <a href="./caller.html" target="_blank" rel="noopener" class="user-link">模拟来电<svg class="icon" aria-hidden="true"><use href="./icons.svg#arrow-up-right"></use></svg></a>
+        <a id="staff-development-link" href="#preview-info" target="_blank" rel="noopener" hidden>开发诊断</a>
+      </nav>
+      <div class="staff-identity">
+        <div class="identity-picker"><label class="sr-only" for="staff-id">工作人员身份</label><svg class="icon" aria-hidden="true"><use href="./icons.svg#users"></use></svg><select id="staff-id"><option value="staff001">工作人员 01</option><option value="staff002">工作人员 02</option></select></div>
+        <span id="staff-status" class="status-badge">OFFLINE</span>
+        <span id="socket-status" class="connection-label">准备连接</span>
+        <div class="availability-actions"><button id="online" class="button staff-online" type="button">上线</button><button id="offline" class="quiet-button" type="button" disabled>下线</button></div>
+      </div>
+    </header>
+
+    <div id="staff-notice" class="staff-notice" role="status" hidden></div>
+
+    <main class="staff-workspace" id="staff-workspace">
+      <aside class="queue-panel" aria-label="来电与人工接管队列">
+        <div class="queue-heading"><div><p class="eyebrow">Incoming Calls</p><h2>来电与接管</h2></div><button id="refresh-queue" class="quiet-button queue-refresh" type="button" aria-label="刷新来电与接管队列"><svg class="icon" aria-hidden="true"><use href="./icons.svg#refresh-cw"></use></svg><span>刷新</span></button></div>
+        <p class="history-note">查看 AI 正在接待的来电；人工请求按优先级与等待时间排序。</p>
+        <div id="queue-list" class="queue-list" aria-live="polite"><p class="empty-state">上线后显示来电与接管请求</p></div>
+        <details class="staff-work-order-history" id="work-order-history">
+          <summary>通话后工单</summary>
+          <div class="work-order-history-heading"><span>仅显示您的本地工单</span><button id="refresh-work-orders" class="quiet-button" type="button">刷新</button></div>
+          <p id="work-order-history-status" role="status">展开后可查询已结束通话。</p>
+          <div id="work-order-history-list"></div>
+        </details>
+        <div class="queue-footnote"><svg class="icon" aria-hidden="true"><use href="./icons.svg#shield-check"></use></svg><p>接受前可先查看交接信息。<br>一次仅接待一个会话。</p></div>
+      </aside>
+
+      <section class="conversation-panel staff-conversation" aria-label="工作人员会话">
+        <div class="conversation-heading">
+          <div class="staff-session-heading"><div><p class="eyebrow">当前通话 · 实时转写与文字通信</p><h1 id="current-title">请选择一个来电</h1></div><span id="current-session" class="privacy-note">尚未选择来电</span></div>
+          <div id="staff-call-header" class="staff-call-header" hidden><span id="staff-call-state" class="call-state">—</span><span id="staff-call-started">来电时间 —</span><span id="staff-call-duration">通话 00:00</span></div>
+          <div class="current-actions">
+            <button id="accept-session" class="send-button accept-button" type="button" disabled><svg class="icon" aria-hidden="true"><use href="./icons.svg#check"></use></svg>接受接管</button>
+            <div class="reject-controls"><input id="reject-reason" maxlength="500" placeholder="暂不接受的原因（选填）" aria-label="暂不接受的原因"><button id="reject-session" class="quiet-button" type="button" disabled>暂不接受</button></div>
+          </div>
+        </div>
+        <div id="staff-conversation-log" class="conversation-log" role="log" aria-live="polite" aria-label="会话消息"></div>
+        <form id="staff-chat-form" class="composer">
+          <label class="sr-only" for="staff-message">发送给来电者</label>
+          <textarea id="staff-message" rows="2" maxlength="4000" placeholder="接受接管后，在这里回复来电者…" required disabled></textarea>
+          <div class="staff-voice-controls" aria-label="工作人员语音输入">
+            <button id="staff-voice-start" class="quiet-button" type="button" disabled><svg class="icon" aria-hidden="true"><use href="./icons.svg#mic"></use></svg>开始说话</button>
+            <button id="staff-voice-stop" class="quiet-button" type="button" disabled>停止识别</button>
+            <button id="staff-voice-cancel" class="quiet-button" type="button" disabled>取消</button>
+            <span id="staff-voice-status" role="status">接受接管后可使用语音输入</span>
+          </div>
+          <p id="staff-voice-partial" class="staff-voice-partial" aria-live="polite" hidden></p>
+          <section id="staff-voice-review" class="staff-voice-review" aria-label="核对工作人员语音转写" hidden>
+            <label id="staff-voice-review-label" for="staff-voice-transcript">核对识别文字后发送</label>
+            <textarea id="staff-voice-transcript" rows="3" maxlength="4000" aria-describedby="staff-voice-review-label"></textarea>
+            <button id="staff-voice-confirm" class="quiet-button" type="button">确认发送</button>
+          </section>
+          <div class="composer-footer"><span id="staff-composer-note">AI 资料仅供工作人员参考，不自动发送给用户。</span><button id="staff-send" class="send-button" type="submit" disabled>发送<svg class="icon" aria-hidden="true"><use href="./icons.svg#arrow-right"></use></svg></button></div>
+          <p class="staff-voice-disclosure">浏览器中文识别可能使用浏览器厂商服务；识别文字核对后发送，不传送人工音频。</p>
+        </form>
+        <details class="end-service-block" id="end-service-block" hidden>
+          <summary><span><svg class="icon" aria-hidden="true"><use href="./icons.svg#file-text"></use></svg>结束服务与跟进</span><svg class="icon disclosure-icon" aria-hidden="true"><use href="./icons.svg#chevron-down"></use></svg></summary>
+          <form id="end-service-form">
+            <label for="staff-notes">工作人员备注</label>
+            <textarea id="staff-notes" rows="2" maxlength="2000" placeholder="记录已完成的流程与需要跟进的事项"></textarea>
+            <label class="checkbox-label"><input id="follow-up-required" type="checkbox">需要后续跟进</label>
+            <div id="follow-up-fields" hidden><label for="follow-up-reason">跟进原因</label><input id="follow-up-reason" maxlength="500" placeholder="请填写跟进原因"><label for="suggested-time">建议跟进时间（选填）</label><input id="suggested-time" type="datetime-local"></div>
+            <button id="end-session" class="handoff-action" type="submit">结束服务并生成工单</button>
+          </form>
+        </details>
+      </section>
+
+      <aside class="status-panel copilot-panel" aria-label="AI 协作辅助">
+        <div class="status-heading"><div><p class="eyebrow">仅工作人员可见</p><h2><svg class="icon" aria-hidden="true"><use href="./icons.svg#activity"></use></svg>AI Copilot</h2></div><span id="copilot-status" class="status-badge">等待来电</span></div>
+        <p class="copilot-boundary">帮助整理信息与查找资料，由您作出专业判断。</p>
+        <section class="summary-block request-summary"><div class="summary-title"><h3>来电者主要诉求</h3></div><p id="main-request">选择来电后查看</p></section>
+        <section class="summary-block work-order-block" id="work-order-block" aria-labelledby="work-order-title" hidden><div class="summary-title"><h3 id="work-order-title">通话后自动工单</h3><span id="work-order-status">待工作人员审核</span></div><p id="work-order-note" class="assistance-note">结束服务后自动保存本地工单，供工作人员审核与跟进。</p><div id="work-order-record" class="detail-content"></div></section>
+        <section class="summary-block live-summary"><div class="summary-title"><h3>实时对话摘要</h3><span id="copilot-updated">—</span></div><p id="copilot-summary">选择会话后显示摘要与已提供信息。</p><ul id="copilot-summary-evidence" class="summary-evidence-list" aria-label="摘要对应的对话摘录"></ul><p id="copilot-summary-note" class="assistance-note">根据已保存的对话原话整理，由工作人员核实。</p></section>
+        <section class="summary-block risk-prompt-block" aria-labelledby="staff-risk-title"><div class="summary-title"><h3 id="staff-risk-title">风险提示 · 原话核对</h3><span>仅工作人员可见</span></div><p class="assistance-note">规则匹配只提醒核实明确表达，不作风险等级或诊断结论。</p><ul id="staff-risk-prompts" class="detail-list" aria-live="polite"><li>选择会话后显示需核实的表达。</li></ul></section>
+        <details class="information-block" open><summary>接管原因与已收集信息</summary><p id="staff-handoff-reasons" class="detail-content">—</p><div id="staff-collected" class="detail-content"></div></details>
+        <section class="staff-knowledge"><div class="summary-title"><h3>相关参考资料</h3><span class="reference-label">知识来源</span></div><ul id="staff-sources" class="detail-list"></ul></section>
+        <section class="staff-knowledge-library" aria-labelledby="staff-knowledge-title">
+          <div class="summary-title"><h3 id="staff-knowledge-title">知识检索</h3><span>全国心理健康资料库</span></div>
+          <p class="assistance-note">查看出处与审核状态。待审资料仅供核对，不自动发送给来电者。</p>
+          <form id="staff-knowledge-form" class="knowledge-search-form">
+            <label class="sr-only" for="staff-knowledge-query">查询全国心理健康资料</label>
+            <input id="staff-knowledge-query" maxlength="500" placeholder="例如：压力、青少年、保密边界" autocomplete="off" required>
+            <button id="staff-knowledge-search" class="quiet-button" type="submit">检索</button>
+          </form>
+          <p id="staff-knowledge-status" class="detail-content" role="status">查询后显示出处与审核状态。</p>
+          <ul id="staff-knowledge-results" class="detail-list"></ul>
+          <details class="information-block"><summary>咨询对话数据集候选</summary><p class="detail-content">仅登记研究目录；尚未下载或用于训练及业务回答。</p><ul id="staff-knowledge-datasets" class="detail-list"></ul></details>
+        </section>
+        <section class="summary-block suggested-actions"><div class="summary-title"><h3>服务流程建议</h3></div><ul id="next-actions" class="detail-list"></ul></section>
+        <details class="information-block" id="staff-package"><summary>完整交接资料</summary><div id="staff-package-content" class="detail-content"></div></details>
+        <details class="information-block technical-details"><summary>会话状态</summary><div class="state-list"><div class="state-row"><span>当前意图</span><strong id="staff-intent">—</strong></div><div class="state-row"><span>当前技能</span><strong id="staff-skill">—</strong></div><div class="state-row"><span>接管状态</span><strong id="staff-handoff">—</strong></div></div></details>
+        <details class="information-block staff-trace-block"><summary><span>执行轨迹 <small>Agent Trace</small></span><span id="staff-trace-status" class="trace-status-label">—</span></summary><p id="staff-trace-id" class="trace-label">只记录系统可观察动作</p><ol id="staff-trace-steps" class="trace-steps"></ol></details>
+        <details class="information-block"><summary>接管与辅助耗时</summary><div id="handoff-metrics" class="detail-content"></div></details>
+        <details class="information-block" id="final-record-block" hidden><summary>最终服务记录</summary><div id="final-record" class="detail-content"></div></details>
+        <details class="information-block" id="follow-up-block" hidden><summary>后续跟进任务</summary><div id="follow-up-record" class="detail-content"></div></details>
+        <p class="panel-footnote">本机模拟来电工作台。接管后可说话转写并核对发送，也可文字输入；尚无双方音频通话。摘要、风险提示与工单仅供工作人员核实，工单未投递到外部机构。AI 不提供诊断、治疗方案或专业风险结论。请勿输入真实敏感信息。</p>
+      </aside>
+    </main>
+    <footer class="footer"><span>MindLink · 人机协同工作台</span><span>工作人员作出决定，AI 提供信息辅助</span></footer>
+  </div>
+  
+  
+  
+  
+
+  <script src="./preview.js" defer></script>
+</body>
+</html>

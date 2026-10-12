@@ -1,0 +1,23 @@
+/* Preview-only notes and controls; the product's existing layouts remain shared. */
+.preview-info{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;box-sizing:border-box;padding:13px 28px;border-bottom:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;font:12px/1.65 Inter,"Segoe UI","Microsoft YaHei",sans-serif;overflow-wrap:anywhere}
+.preview-copy{min-width:0;flex:1}
+.preview-copy strong{font-size:13px;font-weight:600}
+.preview-copy p{margin:3px 0 0;color:#475569}
+.preview-navigation{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px 14px;flex-shrink:0;min-width:0}
+.preview-navigation a{font-size:12px;text-decoration:none;color:#1d4ed8;white-space:nowrap}
+.preview-navigation a[aria-current=page]{font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.preview-navigation button{font:inherit;font-size:11px;padding:6px 10px;min-height:32px;border:1px solid #bfdbfe;border-radius:7px;background:#fff;color:#1d4ed8;cursor:pointer}
+.preview-info :is(a,button):focus-visible{outline:2px solid #2563eb;outline-offset:3px}
+.preview-navigation button:hover{background:#dbeafe}
+.staff-page .staff-workspace{margin-top:18px}
+.staff-page .staff-conversation{height:calc(100dvh - 210px);min-height:650px}
+.staff-page .queue-panel,.staff-page .copilot-panel{max-height:calc(100dvh - 210px);min-height:650px}
+.staff-page .staff-shell{min-height:calc(100vh - 70px)}
+.staff-page #current-session{white-space:normal;overflow-wrap:anywhere}
+.staff-page .staff-identity #socket-status{overflow-wrap:anywhere}
+.staff-page .work-order-block .summary-title{align-items:flex-start;flex-wrap:wrap}
+.staff-page .staff-conversation .staff-message .message-body p{white-space:pre-wrap}
+.caller-shell .call-notice{overflow-wrap:anywhere}
+#preview-human-connect{background:#e5eef3;color:#2c596c;border-color:#bcd1db}
+@media(max-width:1080px){.preview-info{align-items:flex-start;flex-wrap:wrap}.preview-navigation{justify-content:flex-start}.staff-page .staff-conversation,.staff-page .queue-panel{height:760px;min-height:650px;max-height:760px}.staff-page .copilot-panel{min-height:0;max-height:none}.staff-page .staff-identity #socket-status{font-size:10px}}
+@media(max-width:700px){.preview-info{padding:12px 16px;gap:9px}.preview-copy{flex-basis:100%}.preview-copy p{font-size:11px}.preview-navigation{gap:10px 15px;flex-basis:100%;flex-shrink:1}.preview-navigation button{margin-left:auto}.staff-page .queue-panel{height:auto;min-height:0;max-height:370px}.staff-page .staff-conversation{height:820px;min-height:700px;max-height:none}.staff-page .staff-identity #socket-status{flex-basis:100%;order:2}.staff-page .copilot-panel .summary-title>span{white-space:normal;overflow-wrap:anywhere}.staff-page .availability-actions{margin-left:0}.staff-page .staff-conversation .composer-footer{flex-wrap:wrap;gap:8px}.staff-page .staff-conversation .composer-footer>span{flex-basis:100%;max-width:none}.caller-shell{min-height:0}}

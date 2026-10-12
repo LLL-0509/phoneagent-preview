@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf3f5">
+  <title>心理服务中心 | Call Simulator</title>
+  <link rel="stylesheet" href="./caller.css">
+
+  <meta http-equiv="Content-Security-Policy" content="connect-src &apos;none&apos;; object-src &apos;none&apos;; base-uri &apos;none&apos;; form-action &apos;none&apos;">
+  <link rel="stylesheet" href="./preview.css">
+</head>
+<body data-preview-page="caller">
+  <main class="caller-shell">
+    <header class="caller-header"><span class="brand-symbol" aria-hidden="true">M</span><div><strong>心理服务中心</strong><span>浏览器来电模拟</span></div></header>
+    <section id="call-setup" class="call-setup" aria-labelledby="setup-heading">
+      <p class="eyebrow">CALL SIMULATOR</p><h1 id="setup-heading">模拟一个电话打入</h1>
+      <p>此页面用于开发和演示，尚未接入真实电话或机构坐席。请使用模拟资料。</p>
+      <form id="incoming-form">
+        <label for="caller-number">模拟来电号码</label><input id="caller-number" type="tel" value="13800138000" maxlength="32" required autocomplete="off">
+        <label for="caller-name">来电者称呼（可选）</label><input id="caller-name" type="text" maxlength="80" placeholder="例如：演示来电者" autocomplete="off">
+        <button id="simulate-call" type="submit" class="primary-button">模拟来电并接通</button>
+      </form>
+    </section>
+    <section id="call-screen" class="call-screen" aria-label="当前通话" hidden>
+      <div class="call-avatar" aria-hidden="true">M</div><h1>心理服务中心</h1>
+      <p id="call-status" class="call-status" role="status">正在连接</p>
+      <p id="call-party" class="call-party">智能语音助手</p>
+      <time id="call-duration" class="call-duration">00:00</time>
+      <div class="device-states"><span>麦克风 <strong id="microphone-status">已停止</strong></span><span>扬声器 <strong id="speaker-status">待命</strong></span></div>
+      <p id="call-notice" class="call-notice" role="status"></p>
+      <p id="human-note" class="human-note" hidden>人工接听后，双方都可说话转成文字发送。点击“开始说话”即可输入；目前没有双方音频通话。</p>
+      <p id="call-caption" class="call-caption" aria-live="polite" hidden></p>
+      <div class="call-buttons">
+        <button id="answer-call" class="primary-button" type="button" hidden>接通模拟来电</button>
+        <button id="voice-start" type="button" disabled>开始说话</button>
+        <button id="voice-stop" type="button" disabled>结束说话</button>
+        <button id="voice-interrupt" type="button" disabled>打断播报</button>
+        <button id="speaker-toggle" type="button" aria-pressed="false">关闭扬声器</button>
+        <button id="voice-pause" type="button" disabled>暂停语音</button>
+        <button id="request-staff" type="button" disabled>转接工作人员</button>
+      </div>
+      <button id="hangup-call" class="hangup-button" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5c-1.8-.9-1.5-3.4.1-4.6 4.7-3.3 13.1-3.3 17.8 0 1.6 1.2 1.9 3.7.1 4.6l-2.6 1.2c-.9.4-2-.1-2.2-1.1l-.4-1.8a13.2 13.2 0 0 0-7.6 0l-.4 1.8c-.2 1-1.3 1.5-2.2 1.1z"/></svg>挂断</button>
+      <button id="new-call" type="button" class="quiet-button" hidden>模拟新的来电</button>
+      <details class="voice-options"><summary>语音设置与转写核对</summary>
+        <label><input id="voice-review-mode" type="checkbox">发送前核对转写</label>
+        <label><input id="voice-continuous" type="checkbox">连续对话</label>
+        <label><input id="voice-headphone-barge" type="checkbox">耳机说话打断（试验）</label>
+        <p>连续对话须主动开始说话；播报结束后再听取下一句。说话打断请佩戴耳机，浏览器无法保证隔离扬声器回声。</p>
+        <a href="#preview-info" target="_blank" rel="noopener">检查麦克风与中文识别</a>
+      </details>
+      <section id="voice-review" class="voice-review" aria-label="核对语音转写" hidden>
+        <h2>核对转写</h2><p id="voice-review-reason"></p>
+        <label class="sr-only" for="voice-review-text">核对或修改要发送的文字</label><textarea id="voice-review-text" rows="3" maxlength="4000"></textarea>
+        <p id="voice-review-note" role="status"></p>
+        <div class="review-buttons"><button id="voice-review-send" class="primary-button" type="button">确认并发送</button><button id="voice-review-discard" type="button">丢弃转写</button></div>
+      </section>
+    </section>
+    <p id="connection-notice" class="connection-notice" role="alert" hidden></p>
+    <button id="retry-call" type="button" class="quiet-button" hidden>恢复通话连接</button>
+    <details id="development-tools" class="development-tools" hidden><summary>开发模式：文字输入</summary>
+      <form id="text-form"><label class="sr-only" for="text-input">发送演示文字</label><textarea id="text-input" rows="2" maxlength="4000" placeholder="开发测试用文字输入"></textarea><button id="text-send" type="submit">发送文字</button></form>
+    </details>
+    <footer>智能语音助手会明确说明身份，不提供诊断或治疗。<br>音频可能发送至浏览器厂商服务；本站不保存原始音频，已发送的转写会保存并用于服务处理。</footer>
+  </main>
+  
+
+  <script src="./preview.js" defer></script>
+</body>
+</html>
