@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#f8fafc">
-  <title>工作人员工作台 · MindLink</title>
+  <meta name="theme-color" content="#f3efe8">
+  <title>坐席登录 · MindLink</title>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./staff.css">
 
@@ -24,13 +24,25 @@
         <a href="./caller.html" target="_blank" rel="noopener" class="user-link">模拟来电<svg class="icon" aria-hidden="true"><use href="./icons.svg#arrow-up-right"></use></svg></a>
         <a id="staff-development-link" href="#preview-info" target="_blank" rel="noopener" hidden>开发诊断</a>
       </nav>
-      <div class="staff-identity">
-        <div class="identity-picker"><label class="sr-only" for="staff-id">工作人员身份</label><svg class="icon" aria-hidden="true"><use href="./icons.svg#users"></use></svg><select id="staff-id"><option value="staff001">工作人员 01</option><option value="staff002">工作人员 02</option></select></div>
-        <span id="staff-status" class="status-badge">OFFLINE</span>
-        <span id="socket-status" class="connection-label">准备连接</span>
-        <div class="availability-actions"><button id="online" class="button staff-online" type="button">上线</button><button id="offline" class="quiet-button" type="button" disabled>下线</button></div>
-      </div>
+      <div id="staff-identity-dock" class="staff-identity-dock"></div>
     </header>
+
+    <section id="staff-entry" class="staff-entry" aria-labelledby="staff-entry-title">
+      <div id="staff-entry-card" class="staff-entry-card">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <p class="eyebrow">Staff Console</p>
+        <h2 id="staff-entry-title">坐席工作台登录</h2>
+        <p>选择演示坐席后上线。凭据只保存在本机此页签，刷新可以恢复。</p>
+        <p id="staff-entry-alert" class="staff-entry-alert" role="alert" hidden></p>
+        <div class="staff-identity" id="staff-identity">
+          <div class="identity-picker"><label class="sr-only" for="staff-id">工作人员身份</label><svg class="icon" aria-hidden="true"><use href="./icons.svg#users"></use></svg><select id="staff-id"><option value="staff001">工作人员 01</option><option value="staff002">工作人员 02</option></select></div>
+          <span id="staff-status" class="status-badge">OFFLINE</span>
+          <span id="socket-status" class="connection-label">准备连接</span>
+          <div class="availability-actions"><button id="online" class="button staff-online" type="button">上线</button><button id="offline" class="quiet-button" type="button" disabled>下线</button></div>
+        </div>
+        <p id="staff-entry-note" class="staff-entry-note"><a href="./caller.html">来电者登录</a></p>
+      </div>
+    </section>
 
     <div id="staff-notice" class="staff-notice" role="status" hidden></div>
 
@@ -54,6 +66,8 @@
           <div id="staff-call-header" class="staff-call-header" hidden><span id="staff-call-state" class="call-state">—</span><span id="staff-call-started">来电时间 —</span><span id="staff-call-duration">通话 00:00</span></div>
           <div class="current-actions">
             <button id="accept-session" class="send-button accept-button" type="button" disabled><svg class="icon" aria-hidden="true"><use href="./icons.svg#check"></use></svg>接受接管</button>
+            <p id="accept-hint" class="accept-hint">来电者请求人工后，才能接受接管。</p>
+            <button id="staff-hangup" type="button" hidden>挂断</button>
             <div class="reject-controls"><input id="reject-reason" maxlength="500" placeholder="暂不接受的原因（选填）" aria-label="暂不接受的原因"><button id="reject-session" class="quiet-button" type="button" disabled>暂不接受</button></div>
           </div>
         </div>
@@ -91,6 +105,24 @@
       <aside class="status-panel copilot-panel" aria-label="AI 协作辅助">
         <div class="status-heading"><div><p class="eyebrow">仅工作人员可见</p><h2><svg class="icon" aria-hidden="true"><use href="./icons.svg#activity"></use></svg>AI Copilot</h2></div><span id="copilot-status" class="status-badge">等待来电</span></div>
         <p class="copilot-boundary">帮助整理信息与查找资料，由您作出专业判断。</p>
+        <section class="desk-visual" aria-label="来电分布">
+          <div class="desk-ring-card">
+            <div class="summary-title"><h3>来电分布</h3><span id="desk-ring-caption">上线后显示</span></div>
+            <div class="desk-ring-layout">
+              <div class="desk-ring-wrap">
+                <div id="desk-ring" class="desk-ring" role="img" aria-label="暂无来电"></div>
+                <strong id="desk-ring-value">0</strong>
+              </div>
+              <ul id="desk-legend" class="desk-legend"></ul>
+            </div>
+            <div id="desk-timing" class="desk-timing" aria-label="当前通话阶段时长"><p class="desk-timing-label">完成相关步骤后显示阶段时长</p></div>
+          </div>
+          <div class="desk-kpis">
+            <article class="desk-kpi"><span class="desk-dot tone-ai"></span><span>来电</span><strong id="desk-kpi-total">0</strong></article>
+            <article class="desk-kpi"><span class="desk-dot tone-wait"></span><span>等待人工</span><strong id="desk-kpi-wait">0</strong></article>
+            <article class="desk-kpi"><span class="desk-dot tone-human"></span><span>当前通话</span><strong id="desk-kpi-duration">—</strong></article>
+          </div>
+        </section>
         <section class="summary-block request-summary"><div class="summary-title"><h3>来电者主要诉求</h3></div><p id="main-request">选择来电后查看</p></section>
         <section class="summary-block work-order-block" id="work-order-block" aria-labelledby="work-order-title" hidden><div class="summary-title"><h3 id="work-order-title">通话后自动工单</h3><span id="work-order-status">待工作人员审核</span></div><p id="work-order-note" class="assistance-note">结束服务后自动保存本地工单，供工作人员审核与跟进。</p><div id="work-order-record" class="detail-content"></div></section>
         <section class="summary-block live-summary"><div class="summary-title"><h3>实时对话摘要</h3><span id="copilot-updated">—</span></div><p id="copilot-summary">选择会话后显示摘要与已提供信息。</p><ul id="copilot-summary-evidence" class="summary-evidence-list" aria-label="摘要对应的对话摘录"></ul><p id="copilot-summary-note" class="assistance-note">根据已保存的对话原话整理，由工作人员核实。</p></section>
@@ -112,7 +144,7 @@
         <section class="summary-block suggested-actions"><div class="summary-title"><h3>服务流程建议</h3></div><ul id="next-actions" class="detail-list"></ul></section>
         <details class="information-block" id="staff-package"><summary>完整交接资料</summary><div id="staff-package-content" class="detail-content"></div></details>
         <details class="information-block technical-details"><summary>会话状态</summary><div class="state-list"><div class="state-row"><span>当前意图</span><strong id="staff-intent">—</strong></div><div class="state-row"><span>当前技能</span><strong id="staff-skill">—</strong></div><div class="state-row"><span>接管状态</span><strong id="staff-handoff">—</strong></div></div></details>
-        <details class="information-block staff-trace-block"><summary><span>执行轨迹 <small>Agent Trace</small></span><span id="staff-trace-status" class="trace-status-label">—</span></summary><p id="staff-trace-id" class="trace-label">只记录系统可观察动作</p><ol id="staff-trace-steps" class="trace-steps"></ol></details>
+        <details class="information-block staff-trace-block" open><summary><span>执行轨迹 <small>Agent Trace</small></span><span id="staff-trace-status" class="trace-status-label">—</span></summary><p id="staff-trace-id" class="trace-label">只记录系统可观察动作</p><ol id="staff-trace-steps" class="trace-steps"></ol></details>
         <details class="information-block"><summary>接管与辅助耗时</summary><div id="handoff-metrics" class="detail-content"></div></details>
         <details class="information-block" id="final-record-block" hidden><summary>最终服务记录</summary><div id="final-record" class="detail-content"></div></details>
         <details class="information-block" id="follow-up-block" hidden><summary>后续跟进任务</summary><div id="follow-up-record" class="detail-content"></div></details>

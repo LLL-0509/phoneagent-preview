@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#edf3f5">
-  <title>心理服务中心 | Call Simulator</title>
+  <meta name="theme-color" content="#f3efe8">
+  <title>来电者登录 | 心理服务中心</title>
   <link rel="stylesheet" href="./caller.css">
 
   <meta http-equiv="Content-Security-Policy" content="connect-src &apos;none&apos;; object-src &apos;none&apos;; base-uri &apos;none&apos;; form-action &apos;none&apos;">
@@ -12,18 +12,18 @@
 </head>
 <body data-preview-page="caller">
   <main class="caller-shell">
-    <header class="caller-header"><span class="brand-symbol" aria-hidden="true">M</span><div><strong>心理服务中心</strong><span>浏览器来电模拟</span></div></header>
+    <header class="caller-header"><span class="brand-symbol" aria-hidden="true">M</span><div><strong>心理服务中心</strong><span>来电者登录</span></div><a class="role-switch" href="./index.html?staff_id=staff001">坐席登录</a></header>
     <section id="call-setup" class="call-setup" aria-labelledby="setup-heading">
-      <p class="eyebrow">CALL SIMULATOR</p><h1 id="setup-heading">模拟一个电话打入</h1>
-      <p>此页面用于开发和演示，尚未接入真实电话或机构坐席。请使用模拟资料。</p>
+      <p class="eyebrow">来电者</p><h1 id="setup-heading">登录并开始通话</h1>
+      <p>使用模拟号码进入。此页面用于开发和演示，尚未接入真实电话或机构坐席。请使用模拟资料。</p>
       <form id="incoming-form">
         <label for="caller-number">模拟来电号码</label><input id="caller-number" type="tel" value="13800138000" maxlength="32" required autocomplete="off">
         <label for="caller-name">来电者称呼（可选）</label><input id="caller-name" type="text" maxlength="80" placeholder="例如：演示来电者" autocomplete="off">
-        <button id="simulate-call" type="submit" class="primary-button">模拟来电并接通</button>
+        <button id="simulate-call" type="submit" class="primary-button">登录并接通</button>
       </form>
     </section>
     <section id="call-screen" class="call-screen" aria-label="当前通话" hidden>
-      <div class="call-avatar" aria-hidden="true">M</div><h1>心理服务中心</h1>
+      <div id="call-avatar" class="call-avatar" data-party="ai" aria-hidden="true"><img id="assistant-avatar" src="./robot.png" alt=""><span id="human-avatar" hidden>工</span></div><h1>心理服务中心</h1>
       <p id="call-status" class="call-status" role="status">正在连接</p>
       <p id="call-party" class="call-party">智能语音助手</p>
       <time id="call-duration" class="call-duration">00:00</time>
