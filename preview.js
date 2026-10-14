@@ -83,11 +83,17 @@
       { role: 'SYSTEM', content: '固定演示：来电已进入等待人工场景，智能助手暂停回复。' },
     ];
     let stage = 'WAITING_HUMAN';
-    let available = true;
+    let available = false;
     let messages = [];
     let workOrder = null;
     const labels = { WAITING_HUMAN: '等待人工接管', HUMAN_CONNECTED: '人工接听中', ENDED: '通话已结束' };
-    const notice = (value) => { text('staff-notice', value); show('staff-notice', Boolean(value)); };
+    const notice = (value) => {
+      const onGate = Boolean(byId('staff-entry') && !byId('staff-entry').hidden);
+      text('staff-notice', value);
+      show('staff-notice', Boolean(value) && !onGate);
+      text('staff-entry-alert', value);
+      show('staff-entry-alert', Boolean(value) && onGate);
+    };
 
     function renderMessages() {
       const target = byId('staff-conversation-log');
@@ -151,6 +157,19 @@
     function renderControls() {
       const connected = stage === 'HUMAN_CONNECTED';
       const waiting = stage === 'WAITING_HUMAN';
+      const signedIn = available || connected;
+      const identity = byId('staff-identity');
+      const card = byId('staff-entry-card');
+      const dock = byId('staff-identity-dock');
+      const note = byId('staff-entry-note');
+      const host = signedIn ? dock : card;
+      if (identity && host && identity.parentElement !== host) {
+        if (!signedIn && note) card.insertBefore(identity, note);
+        else host.append(identity);
+      }
+      show('staff-entry', !signedIn);
+      show('staff-workspace', signedIn);
+      if (byId('staff-workspace')) byId('staff-workspace').style.display = signedIn ? '' : 'none';
       text('staff-status', connected ? 'BUSY' : available ? 'AVAILABLE' : 'OFFLINE');
       text('socket-status', '本页演示 · 无后台连接');
       text('staff-call-state', `${labels[stage]} · 演示`);
@@ -209,7 +228,7 @@
 
     function reset() {
       stage = 'WAITING_HUMAN';
-      available = true;
+      available = false;
       messages = originalMessages.map((message) => ({ ...message }));
       workOrder = null;
       ['staff-chat-form', 'end-service-form', 'staff-knowledge-form'].forEach((id) => byId(id)?.reset());
@@ -223,10 +242,12 @@
       renderMessages();
       renderControls();
       renderWorkOrder();
-      notice('展示一通虚构来电：查看交接摘录 → 接受接管 → 本页文字演示 → 结束生成工单示例。');
+      notice('请先点击“上线”进入前端演示；刷新或重置后会退出。');
     }
 
     previewBanner(reset);
+    const entryDescription = byId('staff-entry-card')?.querySelector('h2 + p');
+    if (entryDescription) entryDescription.textContent = '选择演示坐席后点击上线。仅在当前页面展示，不创建账号或保存登录凭据。';
     document.querySelector('.brand').href = './index.html';
     const navigation = document.querySelectorAll('.staff-navigation a');
     if (navigation[0]) navigation[0].href = './index.html';
